@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon",
-    "start": "npm run build && node build/server.js",
-    "debug": "tsc --lib dom && node build/server.js",
-    "build": "tsc --lib dom",
-    "serve": "node build/server.js"
+    "start": "nodemon",
+    "start_dev": "NODE_ENV=local nodemon",
+    "build_dev": "NODE_ENV=dev tsc --lib dom",
+    "build_prod": "NODE_ENV=prod tsc --lib dom",
+    "serve": "node ./build/server.js"
   },
   "keywords": [],
   "author": "",

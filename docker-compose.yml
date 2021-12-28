@@ -4,7 +4,7 @@ services:
     build:
       context: $PWD
       dockerfile: $PWD/Dockerfile
-    image: admin-pro:api-1.0.0
+    image: admin-pro/api:1.0.0
     container_name: api
     user: "node"
     hostname: node
@@ -31,6 +31,25 @@ services:
       - POSTGRES_DB=postgres_typescript
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - admin_pro_backend_default
+  api_prod:
+    build:
+      context: $PWD
+      dockerfile: $PWD/Dockerfile
+    image: admin-pro/api:1.0.0
+    container_name: api
+    user: "node"
+    hostname: node
+    ports:
+      - "8080:8080"
+    restart: "always"
+    environment:
+      - PORT=8080
+      - host=db
+      - user=postgres
+      - password=admin123
+      - database=postgres_typescript
     networks:
       - admin_pro_backend_default
 volumes: 

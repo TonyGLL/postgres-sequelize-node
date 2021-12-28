@@ -12,7 +12,7 @@ RUN apk upgrade --update \
     /var/cache/apk/*
 RUN npm install
 EXPOSE 8080
-RUN npm run build_dev
+RUN npm run build_prod
 RUN mkdir /logs
 RUN chmod 777 -R /logs
 RUN chown -R node: /logs
