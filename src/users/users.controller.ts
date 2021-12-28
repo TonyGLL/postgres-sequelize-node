@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { envelope } from '../helpers/envelop';
-import { Handlers } from '../helpers/handlers';
+import Handler from '../handlers/request.handler';
 import { IUser } from './users.model';
 
 import service from './users.service';
@@ -11,11 +11,9 @@ class usersController {
             let usersService: any = '';
             let queryParams = req.query;
             usersService = await service.getUsers(queryParams);
-            const resData: any = Handlers.dataHandler(usersService[1], usersService[0]);
-            res.status(resData.code).json(envelope(resData.data));
+            Handler(res, usersService[0], usersService[1]);
         } catch (error) {
-            const resError = Handlers.errorHandler(error, 'BAD_REQUEST');
-            res.status(resError.code).json(envelope(resError.data));
+            Handler(res, 400, error);
         }
     }
 
@@ -24,11 +22,9 @@ class usersController {
             let usersService: any = '';
             let id: string = req.params.id;
             usersService = await service.getUserById(id);
-            const resData: any = Handlers.dataHandler(usersService[1], usersService[0]);
-            res.status(resData.code).json(envelope(resData.data));
+            Handler(res, usersService[0], usersService[1]);
         } catch (error) {
-            const resError = Handlers.errorHandler(error, 'BAD_REQUEST');
-            res.status(resError.code).json(envelope(resError.data));
+            Handler(res, 400, error);
         }
     }
 
@@ -37,12 +33,9 @@ class usersController {
             let usersService: any = '';
             let user: IUser = req.body;
             usersService = await service.createUser(user);
-            const resData: any = Handlers.dataHandler(usersService[1], usersService[0]);
-            res.status(resData.code).json(envelope(resData.data));
+            Handler(res, usersService[0], usersService[1]);
         } catch (error) {
-            console.log(error)
-            const resError = Handlers.errorHandler(error, 'BAD_REQUEST');
-            res.status(resError.code).json(envelope(resError.data));
+            Handler(res, 400, error);
         }
     }
 
@@ -51,11 +44,9 @@ class usersController {
             let usersService: any = '';
             let id: string = req.params.id;
             usersService = await service.deleteUser(id);
-            const resData: any = Handlers.dataHandler(usersService[1], usersService[0]);
-            res.status(resData.code).json(envelope(resData.data));
+            Handler(res, usersService[0], usersService[1]);
         } catch (error) {
-            const resError = Handlers.errorHandler(error, 'BAD_REQUEST');
-            res.status(resError.code).json(envelope(resError.data));
+            Handler(res, 400, error);
         }
     }
 
@@ -65,11 +56,9 @@ class usersController {
             let id: string = req.params.id;
             let data: any = req.body;
             usersService = await service.updateUser(id, data);
-            const resData: any = Handlers.dataHandler(usersService[1], usersService[0]);
-            res.status(resData.code).json(envelope(resData.data));
+            Handler(res, usersService[0], usersService[1]);
         } catch (error) {
-            const resError = Handlers.errorHandler(error, 'BAD_REQUEST');
-            res.status(resError.code).json(envelope(resError.data));
+            Handler(res, 400, error);
         }
     }
 }

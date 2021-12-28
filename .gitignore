@@ -1,3 +1,9 @@
 node_modules
-.env
+.env.local
+.env.prod
+.env.dev
+build
 dist
+.history
+.vscode
+package-lock.json

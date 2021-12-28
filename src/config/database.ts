@@ -12,8 +12,9 @@ import { DATABASE, HOST, PASSWORD, USER } from './env';
 import { Sequelize } from 'sequelize';
 
 const databaseConnection = new Sequelize(DATABASE, USER, PASSWORD, {
-    host: HOST,
-    dialect: 'postgres'
+    host: HOST || 'localhost',
+    dialect: 'postgres',
+    logging: false
 });
 
 export default databaseConnection;

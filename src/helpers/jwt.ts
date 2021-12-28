@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import handler from '../handlers/request.handler';
-const secret: verifyData['secret'] = process.env.SECRET;
+import { JWT_SECRET as secret } from '../config/env';
 
 interface verifyData {
     token: string | string[] | undefined;
@@ -9,16 +10,23 @@ interface verifyData {
 }
 
 class JSONWebToken {
-    public async verifyToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+    public signJWT(data: any) {
+        const token: string = jwt.sign({
+            ...data,
+        }, secret, { algorithm: 'HS256', expiresIn: '1h' });
+        return token;
+    }
+
+    public async verifyToken(req: Request, res: Response): Promise<any> {
         try {
             const token: verifyData['token'] = (req.headers.authorization) ? (req.headers.authorization).replace('Bearer ', '') : undefined;
             if (token && secret) {
                 const isValid: boolean = JSONWebToken.verifyJWT({ token, secret });
-                if (isValid) return next();
+                if (isValid) return true;
             }
-            throw new Error('401');
-        } catch (error: any) {
-            handler(res, error.message, { message: 'Unnauthorized' });
+            return false;
+        } catch (err: any) {
+            handler(res, err.message, { error: 'Unnauthorized' });
         }
     }
 
@@ -32,4 +40,4 @@ class JSONWebToken {
     }
 }
 
-export default new JSONWebToken().verifyToken;
+export default new JSONWebToken();

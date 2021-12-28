@@ -8,6 +8,8 @@ import * as colors from 'colors';
 import { PORT } from './config/env';
 import { mainRouter } from './main/main.routes';
 import databaseConnection from './config/database';
+import JSONWebToken from './helpers/jwt';
+import handlers from './handlers/request.handler';
 
 export class Server {
     private app: Application;
@@ -37,15 +39,35 @@ export class Server {
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: false }));
         this.app.use(express.static(path.resolve(__dirname, 'public'), { extensions: ['html'] }));
-        this.app.use(cors());
+        this.app.use(cors({ origin: '*' }));
     }
 
     private routes(): void {
-        this.app.use('/api', mainRouter);
+        this.app
+            .use('/', async (req, res, next) => {
+                try {
+                    const endpoints: string[] = ['users'];
+                    let requireToken = false;
+                    endpoints.forEach(item => req.url.includes(item) ? (requireToken = true) : null);
+                    if (requireToken) {
+                        const validateSession: boolean = await JSONWebToken.verifyToken(req, res);
+                        if (validateSession) {
+                            return next();
+                        } else {
+                            return handlers(res, 401, { error: 'Unauthorized.' });
+                        }
+                    }
+                } catch (err) {
+                    return handlers(res, 404, { error: 'Error connection', err });
+                }
+                return next();
+            })
+            .use('/api', mainRouter);
     }
 
     private async dbConnection(): Promise<void> {
         try {
+            await databaseConnection.sync({});
             await databaseConnection.authenticate();
             console.log('Database connected!!');
         } catch (error) {

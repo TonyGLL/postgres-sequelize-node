@@ -20,7 +20,8 @@ const User = databaseConnection.define('User', {
     },
     avatar: {
         type: DataTypes.TEXT,
-        allowNull: true
+        defaultValue: 'null',
+        allowNull: true,
     },
     phone: {
         type: DataTypes.TEXT
@@ -39,7 +40,7 @@ export interface IUser {
     id?: number;
     name: string;
     last_name: string;
-    role: string;
+    role?: string;
     email: string;
     password: string;
     avatar?: string;
